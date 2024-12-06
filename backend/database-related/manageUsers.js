@@ -1,7 +1,3 @@
-
-
-
-
 async function getHighestUserId(collection) {
     try {
         const result = await collection.find({}).toArray();
@@ -31,76 +27,61 @@ export async function addUser(collection, data) {
 }
 
 
-export async function getOneUser(collection, userName) {
+export async function getUser(collection, userID) {
     try {
-        const result = await collection.findOne({username: userName});
+        const result = await collection.findOne({user_id: userID});
         if (!result) {
             throw new Error ("user not found")
         }
+        return result;
     } catch (error) {
         throw new Error("Database: Get User - " + error)
     }
 }
 
-export async function getManyUsers(collection, userNames) {
+export async function getManyUsers(collection, userIDs) {
     try {
 
-        const result = await collection.find( {username: {$in: userNames}} ).toArray();
+        const result = await collection.find( {user_id: {$in: userIDs}} ).toArray();
         if (!result) {
             throw new Error ("user not found")
         }
+        return result;
     } catch (error) {
         throw new Error("Database: Get User - " + error)
     }
 }
 
 
-export async function deleteOneUser(collection, userName) {
+export async function deleteUser(collection, userID) {
 
     try {
-        const result = await collection.findOne({username: userName})
-
-        if (!result) {
+        const result = await collection.deleteOne({user_id: userID})
+        if (!(result.deletedCount === 1)) {
             throw new Error ("User not found")
         }
-        
     } catch (error) {
-        throw new Error("Database deleting user error: " + error)
+        throw new Error("Database: Delete User - " + error)
     }
-
-
 }
 
-// export async function name() {
-//     try {
-        
-//     } catch (error) {
-//         throw new Error("" + error)
-//     }
-// }
 
-// export async function name() {
-//     try {
+// dont use this to increase follower count
+export async function updateUser(collection, userID, updatedData) {
+    try {
         
-//     } catch (error) {
-//         throw new Error("" + error)
-//     }
-// }export async function name() {
-//     try {
-        
-//     } catch (error) {
-//         throw new Error("" + error)
-//     }
-// }export async function name() {
-//     try {
-        
-//     } catch (error) {
-//         throw new Error("" + error)
-//     }
-// }export async function name() {
-//     try {
-        
-//     } catch (error) {
-//         throw new Error("" + error)
-//     }
-// }
+        const result = await collection.updateOne(
+            {user_id: userID},
+            {
+                $set: {updatedData}
+            }
+        )
+        if (!(result.matchedCount > 0)) {
+            throw new Error("user not found")
+        }
+
+
+    } catch (error) {
+        throw new Error("Databasr: Update User - " + error)
+    }
+}
