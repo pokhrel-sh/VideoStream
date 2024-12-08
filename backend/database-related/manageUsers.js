@@ -66,7 +66,6 @@ export async function deleteUser(collection, userID) {
 }
 
 
-// dont use this to increase follower count
 export async function updateUser(collection, userID, updatedData) {
     try {
         

@@ -1,13 +1,15 @@
-import { addUser} from "./database-related/manageUsers.js";
-
-
 import { MongoClient } from 'mongodb';
+import express from 'express';
+import cors from 'cors';
+
+// endpoints imports
+import loginRegisterRouter from './endpoints/login-register.js';
+
+
 const URI = "mongodb://localhost:27017";
 const mongo = new MongoClient(URI);
-
 let database = null
 let usersCollection = null
-
 
 try {
     await mongo.connect();
@@ -19,18 +21,29 @@ try {
 }
 
 
-// ===============data insertion example==============
+const app = express();
+const PORT = 4000
 
-// const user =   {
-//     "user_id": 9,
-//     "username": "coder_123",
-//     "password": "code4life",
-//     "name": "Jake Blue",
-//     "email": "jake.blue@example.com",
-//     "date_of_birth": "04/17/1999",
-//     "followers": 200,
-//     "last_room_joined": 783429,
-//     "account_bio": "Coding my way to success."
-// }
-// addUser(usersCollection, user)
+app.use(cors());
+app.use(express.json());
+
+
+function giveRouterAcessToMongoCollection(collection) {
+    function middleware(req,res,next) {
+        req.collection = collection
+        next()
+    }
+    return middleware;
+}
+
+
+
+app.use(("/"), giveRouterAcessToMongoCollection(usersCollection), loginRegisterRouter)
+
+
+
+
+app.listen(PORT, ()=>{
+    console.log(`============================= Server Running: http://localhost:${PORT} ==============================`)
+})
 
