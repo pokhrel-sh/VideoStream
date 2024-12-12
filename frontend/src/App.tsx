@@ -6,6 +6,7 @@ import Home from './pages/Home'
 import './index.css'
 import LandingPage from './pages/LandingPage'
 
+
 function App() {
   return (
     <BrowserRouter>
